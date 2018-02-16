@@ -1,0 +1,83 @@
+Creating FTP users/groups and controlling permissons
+========
+
+sudo apt-get vsftpd 
+sudo apt-get ftp
+sudo apt-get acl
+
+
+------
+useradd [user_name]
+passwd [user_name]
+
+Create FTP directory in /var/ftp and then bind to the 'home' directory you wish to specify for this user with -------
+mount --bind /var/www/vhosts/domain.com/ /var/ftp/custom_name/.
+
+Change user's home directory with ---------
+usermod -d /var/ftp/custom_name/ user_name
+
+In /etc/vsftpd/vsftpd.conf, ensure all all of the following are set:-
+chroot_local_user=YES
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+Only list users in the vsftpd.chroot_list file if you want them to have full access to anywhere on the server. By not listing them in this file, you're saying restrict all vsftpd users to their specified home directory.
+
+In other words -------
+means that by default, ALL users get chrooted except users in the file...
+chroot_local_user=YES
+chroot_list_enable=YES
+means that by default, ONLY users in the file get chrooted...
+chroot_local_user=NO
+chroot_list_enable=YES
+------
+
+
+
+
+
+Applying permissons with setfacl
+===========
+sudo chown -R josh:joshgroup /ftpfolder
+sudo chmod -R a-rwx /ftpfolder
+sudo chmod -R ug+rwX /ftpfolder
+
+sudo setfacl -Rdm u:josh:rwX,g:joshgroup:rwX /ftpfolder
+getfacl /ftpfolder
+
+Output:
+# file: ftpfolder
+# owner: josh
+# group: joshgroup
+user::rwx
+group::rwx
+other::---
+default:user::rwx
+default:user:ryan:rwx
+default:group::rwx
+default:group:www-data:rwx
+default:mask::rwx
+default:other::---
+
+
+
+Applying default permissons 
+------
+chmod g+s <directory>  //set gid 
+setfacl -d -m g::rwx /<directory>  //set group to rwx default 
+setfacl -d -m o::rx /<directory>   //set other
+
+
+
+Examples
+------
+If you want the public to see new uploaded folders/files -------
+sudo setfacl -Rdm o::r-x folderlocation
+
+Or set default permissions for the group joshgroup -------
+
+
+
+
+
+
+

@@ -1,0 +1,170 @@
+
+
+Scan local Wifi 
+=====
+tshark -ni en0 -Y "bootp.option.type == 53" -T fields -e bootp.option.hostname -e eth.src_resolved 
+
+
+1awscli - commandline tools for Amazon web services -- frequently updated. Nice to have brew take care of it
+bash-completion - smarter autocomplete for bash
+calc - my go-to calculator
+ccrypt - strong file crypt tool
+dos2unix - convert CRLF <--> CR
+geoip - find where an IP address comes from
+git-flow
+hh - shell history browser / searcher
+htop - best top replacement
+irssi - my favorite commandline irc client
+jq - 'like sed for JSON data'
+lftp - nice commandline ftp
+links - best text mode web browser
+lynx - second best text mode web browser
+ncdu - ncurses disk usage browser
+nmap - never know when you will need to port scan something
+tig - curses git repo browser
+tmux - terminal multiplexer - a better 'screen'
+tree - view directory structure under CWD
+unrar - unarchive .rar files
+wget - grab remote files with a URL
+vimpager - use vim colorization rules for paging through any file - you may want to replace 'less' with this
+thefuck - corrector
+trash - allows you to save what you rm'ed
+speedtest-cli - better than browser
+
+
+
+
+Git Process for Funnel
+==========
+$git checkout develop
+$git checkout -b youbranchname
+ ...do your changes...
+$git commit -m "Message"
+$git checkout develop
+$git merge youbranchname
+ ...push your changes...
+
+
+
+
+Scan drive for errors
+========
+fdisk -l /dev/xxx
+
+
+
+
+
+Sync files to location
+=========
+rsync --min-size=30mb --progress --recursive /home/jon/Desktop/data/ /home/jon/Desktop/backupdata/
+
+-
+or
+-
+
+cp -Rfv sourcefile destinationfile
+
+cp = copy
+R = maintains file hierarchies
+f = if an existing destination file cannot be opened, remove it and try again
+v = verbose mode, displays files transferred as it progresses
+
+
+
+
+
+On live server
+==========
+$ git branch
+- will show which default branch is being used 
+
+$ git fetch
+$ git log HEAD..origin
+To see what is fixing to be pulled, before actually pulling 
+
+
+
+
+
+
+===============
+NMAP
+===============
+
+List ciphers supported by an HTTP server
+$ nmap --script ssl-enum-ciphers -p 443 www.example.com
+
+List ciphers supported by an IMAP server
+$ nmap --script ssl-enum-ciphers -p 993 mail.example.com
+
+
+
+
+
+
+Python Fun
+=========
+$ virtualenv flask
+then
+$ cd flask
+
+let's activate the virtualenv
+$ source bin/activate
+
+now you should see (flask) on the left of the command line. Let's install flask
+$ pip install flask
+
+
+Then create a file hello.py
+```
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello World!"
+
+if __name__ == "__main__":
+    app.run()
+```
+
+
+To manually run script: 
+$ python hello.py
+
+
+
+If port is taken:. 
+Check the PID(:5000 is the host since I've been running on localhost:5000). 
+
+$ lsof -i :5000
+
+Then kill it:
+$ sudo kill -9 PID
+
+
+
+
+
+Searching for installed items	
+===================
+dpkg --list | grep [php5-mysql]
+
+
+
+
+Emulate Download
+=========
+wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test1000.zip
+
+
+
+
+===================
+Spider Crawler
+
+pip install scrapy
+
+
+

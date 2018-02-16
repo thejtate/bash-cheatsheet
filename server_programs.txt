@@ -1,0 +1,618 @@
+I see everything...
+--+-----+--
+$stat [file/folder]
+
+
+I see all new stuff....
+--+-----+--
+$cd
+
+
+
+===========
+chkrootkit
+$ apt-get install chkrootkit
+$ chkrootkit
+
+
+Setup cron to run and email you list:
+----
+0 3 * * * /usr/sbin/chkrootkit 2>&1 | mail -s "chkrootkit output of my server" you@yourdomain.com)
+
+
+
+===========
+lynis
+$ cd /usr/local
+$ git clone https://github.com/CISOfy/lynis
+$ cd lynis 
+$ lynis audit system
+
+
+
+
+
+===========
+Error Log Watching
+$ watch tail -n 15 [my_error_log]
+
+
+
+
+===========
+View all installed ubuntu apts
+$ apt list --installed
+
+
+Ever have trouble upgrading a package, use: 
+$ apt-get --with-new-pkgs upgrade
+
+
+Purge specific install apts
+$ apt-get purge name.v.*
+
+So this remove everything php v 7.1 and all its packages
+$ apt-get purge php7.1*
+
+
+
+
+
+===========
+Check DNS
+$ dig +nocmd +noall +answer www.site.com
+
+
+
+
+
+============================================
+Check a server for errors before starting
+
+$ apachectl configtest
+$ service apache2 restart 
+
+or
+
+$ service apache2 stop
+$ /etc/init.d/apache2 start
+$ /etc/init.d/apache2 status
+
+
+
+
+Setting up CRON
+============================================
+$crontab -e 
+
+*     *     *   *    *        command to be executed
+-     -     -   -    -
+|     |     |   |    |
+|     |     |   |    +----- day of week (0 - 6) (Sunday=0)
+|     |     |   +------- month (1 - 12)
+|     |     +--------- day of        month (1 - 31)
+|     +----------- hour (0 - 23)
++------------- min (0 - 59)
+
+
+
+So example (45 days the SSL renews):
+0 0 */45 * * certbot renew
+
+
+
+============================================
+Permissions and User Control:
+
+useradd -d [home directory] -G [user]
+groupadd [group]
+useradd -[group] [user]
+chown -R paddy:www-data /var/www/websiteindevelopment
+chmod -R 755 /var/www/websiteindevelopment
+chmod -R 775 /var/www/websiteindevelopment/directorywritablebygroup
+
+userdel -r<<delete the home directory>> [user]
+
+passwd [user]
+
+
+quickie
+
+chmod -R guo[-|+]rwx [directory]
+
+
+
+
+======================================
+INSTALL THESE 2 PACKAGES FIRST
+======================================
+$ apt-get update
+$ apt-get upgrade
+$ sudo apt-get install software-properties-common
+$ sudo apt-get install python-software-properties
+
+
+Searching for installed items
+------
+$ dpkg --list | grep [php5-mysql]
+
+
+Few other good brews to install:
+------
+cpdavd  cPanel DAV Daemon
+cphulkd cPHulk Daemon
+crond   Cron Daemon
+exim    Exim Mail Server
+ipaliases   IP Aliases
+mailman Mailman
+pop POP3 Server
+rsyslogd    rsyslog System Logger Daemon
+spamd   Apache SpamAssassin™
+sshd    SSH Daemon
+
+
+
+
+
+
+===================
+Install Apache
+===================
+
+$ sudo apt-get update
+$ sudo apt-get install apache2
+
+
+To see if it running aftewards
+$ sudo lsof | grep ':http '
+
+Remember to run 
+$ sudo a2ensite example.com.conf
+
+After adding a new .conf files
+Or create a Relative Symlink
+
+Double check if port 80 is open
+$nelnet [ip] 80
+
+
+----
+=======
+sudo netstat -ltnp | grep ':80'
+=======
+-----
+
+
+--------
+Creating a symlink
+
+$ ln -s /referance-file /my-sym-link
+
+updating one
+$ ln -sf
+
+
+
+===================
+Installing MPM_ITK (to use apache userId variables)
+===================
+$ apt-get install libapache2-mpm-itk
+
+
+
+
+
+======================================
+Email (postfix or sendmail)
+======================================
+
+$apt-get install postfix 
+
+Don't forget to add the domain to the list of $myhostname
+
+
+
+Settings controls: 
+-------
+$postconf -n
+/etc/postfix/main.cf
+
+$postfix reload
+
+
+Errors: 
+/var/log/syslog
+
+
+
+
+Test: 
+-------
+$nano testmail.text
+--
+To: jtate@funneldesigngroup.com
+Subject: sendmail test two
+From: admin@profilesofs.com
+
+And here goes the e-mail body, test test test..
+--
+
+$sendmail -vt < testmail.txt
+
+
+
+
+======================================
+Double checking MX/TXT in DNS:
+======================================
+$nslookup -type=mx domain.com
+
+$nslookup -type=txt domain.com
+
+
+  
+======================================
+Install MySQL 
+======================================
+
+$ apt-get update
+$ apt-get install mysql-server
+
+-----
+Backing up old tables
+
+$ mysqldump --lock-all-tables -u root -p --all-databases > dump.sql
+
+
+- Then after installing the newer version, you can restore if needed by running:
+
+$ mysql -u root -p < dump.sql
+
+
+
+----
+Manual DB creation
+
+MYSQL sudo mysql -u root -p
+SHOW DATABASES;
+CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost';
+FLUSH PRIVILEGES;
+
+
+----
+Be sure, for Wordpress, to add these extensions to the php.ini file being used. 
+
+$ extension=mysqli.so
+$ extension=mysql.so
+$ extension=pdo_mysql.so
+
+
+$extension=php_openssl.dll
+
+
+IF MYSQL IN MAMP IS NOT RESPONDING AND WONT LOAD
+-----
+$ killall -9 mysqld
+
+
+
+
+
+
+
+======================================
+INSTALL php 5.6
+======================================
+
+Remove all the stock php packages
+---
+
+
+$ sudo apt-get purge `dpkg -l | grep php| awk '{print $2}' |tr "\n" " "`
+
+
+Add the PPA
+---
+$ sudo add-apt-repository ppa:ondrej/php
+
+
+Install your PHP Version
+---
+sudo apt-get update
+sudo apt-get install php5.6
+
+You can install php5.6 modules too for example
+
+$ sudo apt-get install php5.6-mbstring php5.6-mcrypt php5.6-mysql php5.6-xml
+
+
+Verify your version
+---
+If you have installed php5.6-cli
+
+$ sudo php -v
+
+If you don't have php5.6-cli, put this on a .php file
+
+<?php 
+      //outputs php configuration info
+      phpinfo(); 
+?>
+
+
+===================
+Switching 
+php7 -> php 5.6
+
+
+$ sudo a2dismod php7.0 && sudo a2enmod php5.6 && sudo service apache2 restart
+$ sudo ln -sfn /usr/bin/php5.6 /etc/alternatives/php
+$ php -v 
+
+
+
+
+===================
+Install XML / GD / further php extensions 
+
+$ apt-get install php5.6-mbstring php5.6-mcrypt php5.6-xml php5.6-gd
+
+
+
+
+===================
+Install MC
+
+$ apt-get update
+$ apt-get install mc
+
+
+
+
+
+
+===================
+Webmin 
+
+echo "deb http://download.webmin.com/download/repository sarge contrib" >> /etc/apt/sources.list ; echo "deb http://webmin.mirror.somersettechsolutions.co.uk/repository sarge contrib" >> /etc/apt/sources.list ; wget http://www.webmin.com/jcameron-key.asc ; apt-key add jcameron-key.asc
+
+$ apt-get update
+$ apt-get install webmin
+    
+
+
+[ [ [ [ DON'T forget to re-open up the port for 10000 ] ] ] ] 
+sudo iptables -A INPUT -p tcp -m tcp --dport 10000 -j ACCEPT
+iptables -L 
+
+
+
+===================
+Install MPM (Multi-Processing Module)
+
+$ sudo apt-get update
+$ sudo apt-get install apache2-mpm-itk
+
+
+
+
+
+==================
+Install GIT
+
+1.9 is recommended
+$ apt-get install apache2 git-core
+
+To pull fresh repo
+$ git clone http://git.funneleyes.com/repos/nameofrepo.git
+
+or
+
+$ git clone http://josh.tate:git.funneleyes.com/repos/nameofrepo.git
+
+
+
+
+
+
+
+===================
+Enabling Mod Rewrite
+
+$ a2enmod rewrite
+
+
+
+
+===================
+Fail2Ban
+
+$ sudo apt-get update
+$ sudo apt-get install fail2ban
+
+
+Copy the config file, with everything commented out: 
+$ awk '{ printf "# "; print; }' /etc/fail2ban/jail.conf | sudo tee /etc/fail2ban/jail.local
+
+
+
+
+
+
+
+
+=======================================================
+CHECKING CURRENT USERS ON SERVER
+=======================================================
+/etc/passwd 
+
+
+View current group that user belongs to:
+$ groups [username]
+
+
+Create a new group:
+$ groupadd [group]
+
+
+Create a new user:
+$ sudo useradd -d [/var/www/html] -G [group] [user]
+
+If a user exists:
+$ sudo usermod -g [groupname] [user]
+
+To update password:
+$ passwd [user]
+
+
+
+=======================================================
+NETSTAT LISTEN
+=======================================================
+netstat -ap tcp
+
+or for filtered version
+$ netstat -atp tcp | grep -i "listen"
+
+or us
+$ sudo lsof -i -P | grep -i "listen"
+
+
+
+
+Test the port outside the server:
+===========
+$ nmap -p [port#] [ip]
+
+So to see if port 80 is working
+$ nmap -p 80 localhost 
+
+
+
+
+Great server space program
+===========
+$ sudo apt-get install ncdu -y
+
+
+
+
+See if a server is running
+===========
+$ sudo netstat -plunt | grep apache2
+
+
+
+
+
+
+=======================================================
+INSTALLING COMPOSER  
+=======================================================
+
+$ apt-get install curl
+$ curl -s https://getcomposer.org/installer | php
+$ mv composer.phar /usr/local/bin/composer
+$ composer
+
+
+
+
+
+
+
+=======================================================
+INSTALLING SSL  
+=======================================================
+
+
+SSL Key and CSR generation
+===========
+--- Generate Key ---
+$ openssl genrsa -des3 -out <private key file name>.key 2048
+
+--- Generate CSR ---
+$ openssl req -new -newkey rsa:2048 -nodes -keyout yourdomain.key -out yourdomain.csr
+
+
+
+Install mod_ssl
+===========
+$ a2enmod ssl
+$ a2ensite example.com
+
+
+
+
+
+Create .conf file and copy over .crt files
+===========
+/etc/apache2/sites-available/example.com.conf
+-------
+<VirtualHost *:443>
+    SSLEngine On
+    SSLCertificateFile /etc/ssl/certs/example.com.crt
+    SSLCertificateKeyFile /etc/ssl/private/example.com.key
+    SSLCACertificateFile /etc/ssl/certs/ca-certificates.crt  #If using a self-signed certificate, omit this line
+
+    ServerAdmin info@example.com
+    ServerName www.example.com
+    DocumentRoot /var/www/html/example.com/public_html/
+    ErrorLog /var/www/html/example.com/log/error.log
+    CustomLog /var/www/html/example.com/log/access.log combined
+</VirtualHost>
+
+
+
+
+
+Test the SSL
+---------
+$ openssl s_client -CApath /etc/ssl/certs/ -connect example.com:443
+
+
+Great source for Windows port opening for MSSQL
+---------
+http://blog.citrix24.com/configure-sql-express-to-accept-remote-connections/
+https://support.rackspace.com/how-to/configuring-ms-sql-server-for-remote-access/
+
+
+
+
+OR EASTY INSTALL WITH CERTBOT
+===============
+$ sudo apt-get update
+$ sudo apt-get install software-properties-common
+$ sudo add-apt-repository ppa:certbot/certbot
+$ sudo apt-get update
+$ sudo apt-get install python-certbot-apache 
+
+$ sudo certbot --apache
+
+
+Set up cron for 45 day renewal:
+-----
+$ sudo certbot renew --dry-run
+
+=======================================================
+=======================================================
+
+
+
+
+Apache2 server redirect
+=============
+RewriteEngine on
+RewriteCond %{SERVER_NAME} =www.tmoklaw.com [OR]
+RewriteCond %{SERVER_NAME} =www.trmglaw.com [OR]
+RewriteCond %{SERVER_NAME} =trmglaw.com
+RewriteRule ^ https://tmoklaw.com%{REQUEST_URI} [L,R=301]
+
+
+
+Windows IIS
+=======
+$ iisreset /restart
+$ iisreset /status
+
